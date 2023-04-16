@@ -128,7 +128,7 @@ public static class Correction
                     if (columnValue == resultValue)
                     {
                         // odwaracamy znaleziony bit błedu(0 XOR 1 = 1; 1 XOR 1 = 0)
-                        buffer[0] ^= (byte)(1 << (7 - i));
+                        messageShort ^= (ushort)(1 << (15 - i));
                         // zmienna pomocnicza mówiąca, że znaleziono jeden bład
                         oneError = true;
                     }
