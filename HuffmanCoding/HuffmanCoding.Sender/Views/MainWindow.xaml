@@ -6,7 +6,7 @@
         xmlns:local="clr-namespace:HuffmanCoding.Sender"
         xmlns:vm="clr-namespace:HuffmanCoding.Sender.ViewModels"
         mc:Ignorable="d"
-        Title="MainWindow" Height="450" Width="800">
+        Title="MainWindow" Height="350" Width="800" Background="LightSeaGreen" ResizeMode="NoResize">
     <Window.DataContext>
         <vm:MainViewModel />
     </Window.DataContext>
@@ -17,21 +17,21 @@
             <RowDefinition Height="Auto"/>
             <RowDefinition Height="Auto"/>
         </Grid.RowDefinitions>
-        <StackPanel Grid.Row="0">
+        <StackPanel Grid.Row="0" HorizontalAlignment="Center">
             <Label>Ip Address</Label>
-            <TextBox Text="{Binding IpAddress}" />
+            <TextBox Text="{Binding IpAddress}" Width="300" Padding="2" FontSize="16"/>
         </StackPanel>
-        <StackPanel Grid.Row="1">
+        <StackPanel Grid.Row="1" HorizontalAlignment="Center">
             <Label>Port number</Label>
-            <TextBox Text="{Binding PortNumber}" />
+            <TextBox Text="{Binding PortNumber}" Width="300" Padding="2" FontSize="16"/>
         </StackPanel>
-        <StackPanel Grid.Row="2">
+        <StackPanel Grid.Row="2" HorizontalAlignment="Center">
             <Label>File path</Label>
-            <TextBox Text="{Binding FileName}" />
-            <Button Command="{Binding ChooseFileCommand}">Choose file</Button>
+            <TextBox Text="{Binding FileName}" Width="600" Padding="2" FontSize="16"/>
+            <Button Command="{Binding ChooseFileCommand}" Width="150" Margin="5">Choose file</Button>
         </StackPanel>
         <StackPanel Grid.Row="3">
-            <Button Command="{Binding SendCommand}">Send</Button>
+            <Button Command="{Binding SendCommand}" Width="150" FontSize="16" Margin="50" FontWeight="Bold">Send</Button>
         </StackPanel>
         
     </Grid>

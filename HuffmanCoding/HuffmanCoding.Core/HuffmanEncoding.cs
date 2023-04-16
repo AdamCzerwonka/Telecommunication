@@ -150,6 +150,6 @@ public partial class HuffmanEncoding
         Traverse(node.Right, text + '1');
     }
 
-    [GeneratedRegex(".\\d+\\s")]
+    [GeneratedRegex("(.|\\s)\\d+\\s")]
     private static partial Regex DictRegex();
 }

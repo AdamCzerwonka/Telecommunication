@@ -65,7 +65,6 @@ public class MainViewModel : ObservableObject
         var encoding = new HuffmanEncoding(fileContent);
         var dict = encoding.GetEncoding();
         var msg = encoding.EncodeMessage(fileContent);
-        var dec = encoding.DecodeMessage(msg);
 
         var ipAddr = IPAddress.Parse(IpAddress);
         var endpoint = new IPEndPoint(ipAddr, PortNumber);
