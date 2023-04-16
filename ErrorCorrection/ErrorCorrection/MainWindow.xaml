@@ -1,0 +1,49 @@
+﻿<Window x:Class="ErrorCorrection.MainWindow"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+        xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+        xmlns:local="clr-namespace:ErrorCorrection"
+        mc:Ignorable="d"
+        Background="Pink"
+        Title="Error Correction App" Height="500" Width="800" ResizeMode="NoResize">
+    
+    <Window.DataContext>
+        <local:MainWindowViewModel />
+    </Window.DataContext>
+    
+    <Grid>
+        <Grid.ColumnDefinitions>
+            <ColumnDefinition Width="*" />
+            <ColumnDefinition Width="*" />
+        </Grid.ColumnDefinitions>
+        <Grid.RowDefinitions>
+            <RowDefinition Height="*" />
+            <RowDefinition Height="*" />
+        </Grid.RowDefinitions>
+
+        <!-- GRID = 0, COLUMN = 0 -->
+        <StackPanel Grid.Row="0" Grid.Column="0" Orientation="Vertical" HorizontalAlignment="Center" VerticalAlignment="Bottom">
+            <Label FontSize="20px" HorizontalAlignment="Center">Plik wejściowy</Label>
+            <TextBox Padding="3" Text="{Binding InputFile}" FontSize="15px" Width="300px" />
+            <Button Command="{Binding ChooseInputCommand}" Content="Wybierz plik" Width="100px" Margin="10px"></Button>
+        </StackPanel>
+        
+        <!-- GRID = 0, COLUMN = 1 -->
+        <StackPanel Grid.Row="0" Grid.Column="1" Orientation="Vertical" HorizontalAlignment="Center" VerticalAlignment="Bottom">
+            <Label FontSize="20px" HorizontalAlignment="Center">Plik zakodowany</Label>
+            <TextBox Padding="3" Text="{Binding OutputFile}" FontSize="15px" Width="300px" />
+            <Button Command="{Binding ChooseOutputCommand}" Content="Wybierz plik" Width="100px" Margin="10px"></Button>
+        </StackPanel>
+        
+        <!-- GRID = 1, COLUMN = 0 -->
+        <StackPanel Grid.Row="1" Grid.Column="0" Orientation="Vertical" HorizontalAlignment="Right">
+            <Button Padding="3" Command="{Binding EncodeCommand}" Content="Zakoduj" Width="180px" FontSize="28px" Margin="0 40px 30 0"></Button>
+        </StackPanel>
+        
+        <!-- GRID = 1, COLUMN = 1 -->
+        <StackPanel Grid.Row="1" Grid.Column="1" Orientation="Vertical" HorizontalAlignment="Left" >
+            <Button Padding="3" Command="{Binding DecodeCommand}" Content="Odkoduj" Width="180px" FontSize="28px" Margin="30 40px 0 0"></Button>
+        </StackPanel>
+    </Grid>
+</Window>

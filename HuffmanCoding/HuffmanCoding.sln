@@ -1,0 +1,28 @@
+﻿
+Microsoft Visual Studio Solution File, Format Version 12.00
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "HuffmanCoding.Core", "HuffmanCoding.Core\HuffmanCoding.Core.csproj", "{054A2C7D-3BFE-44BB-A2A6-B427FDAA8812}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "HuffmanCoding.Sender", "HuffmanCoding.Sender\HuffmanCoding.Sender.csproj", "{9430BCCB-4DC6-41C9-9059-8445A367BF53}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "HuffmanCoding.Receiver", "HuffmanCoding.Receiver\HuffmanCoding.Receiver.csproj", "{8DE2647C-9487-4015-8FD0-2694A8B23BC0}"
+EndProject
+Global
+	GlobalSection(SolutionConfigurationPlatforms) = preSolution
+		Debug|Any CPU = Debug|Any CPU
+		Release|Any CPU = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{054A2C7D-3BFE-44BB-A2A6-B427FDAA8812}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{054A2C7D-3BFE-44BB-A2A6-B427FDAA8812}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{054A2C7D-3BFE-44BB-A2A6-B427FDAA8812}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{054A2C7D-3BFE-44BB-A2A6-B427FDAA8812}.Release|Any CPU.Build.0 = Release|Any CPU
+		{9430BCCB-4DC6-41C9-9059-8445A367BF53}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{9430BCCB-4DC6-41C9-9059-8445A367BF53}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{9430BCCB-4DC6-41C9-9059-8445A367BF53}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{9430BCCB-4DC6-41C9-9059-8445A367BF53}.Release|Any CPU.Build.0 = Release|Any CPU
+		{8DE2647C-9487-4015-8FD0-2694A8B23BC0}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{8DE2647C-9487-4015-8FD0-2694A8B23BC0}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{8DE2647C-9487-4015-8FD0-2694A8B23BC0}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{8DE2647C-9487-4015-8FD0-2694A8B23BC0}.Release|Any CPU.Build.0 = Release|Any CPU
+	EndGlobalSection
+EndGlobal

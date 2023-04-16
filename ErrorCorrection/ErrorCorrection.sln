@@ -1,0 +1,28 @@
+﻿
+Microsoft Visual Studio Solution File, Format Version 12.00
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ErrorCorrection", "ErrorCorrection\ErrorCorrection.csproj", "{E3B57FB5-623E-4784-879B-8DC80C180507}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ErrorCorrection.Lib", "ErrorCorrection.Lib\ErrorCorrection.Lib.csproj", "{1AF0059F-A5BA-4A42-8545-AC40DB8DCDCC}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ErrorCorrection.Tests", "ErrorCorrection.Tests\ErrorCorrection.Tests.csproj", "{8CB9DEC5-BA1C-4AAD-8CBF-C812DB7D27D4}"
+EndProject
+Global
+	GlobalSection(SolutionConfigurationPlatforms) = preSolution
+		Debug|Any CPU = Debug|Any CPU
+		Release|Any CPU = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{E3B57FB5-623E-4784-879B-8DC80C180507}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{E3B57FB5-623E-4784-879B-8DC80C180507}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{E3B57FB5-623E-4784-879B-8DC80C180507}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{E3B57FB5-623E-4784-879B-8DC80C180507}.Release|Any CPU.Build.0 = Release|Any CPU
+		{1AF0059F-A5BA-4A42-8545-AC40DB8DCDCC}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{1AF0059F-A5BA-4A42-8545-AC40DB8DCDCC}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{1AF0059F-A5BA-4A42-8545-AC40DB8DCDCC}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{1AF0059F-A5BA-4A42-8545-AC40DB8DCDCC}.Release|Any CPU.Build.0 = Release|Any CPU
+		{8CB9DEC5-BA1C-4AAD-8CBF-C812DB7D27D4}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{8CB9DEC5-BA1C-4AAD-8CBF-C812DB7D27D4}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{8CB9DEC5-BA1C-4AAD-8CBF-C812DB7D27D4}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{8CB9DEC5-BA1C-4AAD-8CBF-C812DB7D27D4}.Release|Any CPU.Build.0 = Release|Any CPU
+	EndGlobalSection
+EndGlobal
