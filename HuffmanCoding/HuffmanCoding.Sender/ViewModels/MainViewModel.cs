@@ -61,21 +61,26 @@ public class MainViewModel : ObservableObject
 
     private void Send()
     {
+        // wczytaj plik
         var fileContent = File.ReadAllText(FileName);
+        // utworz instancje klasy z tekstu
         var encoding = new HuffmanEncoding(fileContent);
+        // utworz slownik oraz zakodowana wiadomosc
         var dict = encoding.GetEncoding();
         var msg = encoding.EncodeMessage(fileContent);
-
+        
         var ipAddr = IPAddress.Parse(IpAddress);
         var endpoint = new IPEndPoint(ipAddr, PortNumber);
-
-        var sender = new Socket(ipAddr.AddressFamily, SocketType.Stream, ProtocolType.Tcp);
         try
         {
+            // utworz socket
+            var sender = new Socket(ipAddr.AddressFamily, SocketType.Stream, ProtocolType.Tcp);
+            // nawiaz polaczenie
             sender.Connect(endpoint);
+            // przeslij dane slownikowe z zakodowana wiadomoscia
             var data = Encoding.UTF8.GetBytes(dict + "<MSG>" + msg + "<EOF>");
             sender.Send(data);
-
+            // zakoncz polaczenie
             sender.Shutdown(SocketShutdown.Both);
             sender.Close();
         }

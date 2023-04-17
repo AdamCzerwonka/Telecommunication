@@ -15,7 +15,9 @@ public partial class HuffmanEncoding
     public static HuffmanEncoding CreateFromEncoding(string dict)
     {
         var obj = new HuffmanEncoding();
+        // przypisz regex, ktory podzieli slownik kodowy
         var regex = DictRegex();
+        // podziel slownik oraz utworz z nich dictionary
         var matches = regex.Matches(dict).ToArray().Select(x =>
         {
             var character = x.Value[0];
@@ -23,6 +25,7 @@ public partial class HuffmanEncoding
             var pair = new KeyValuePair<char, string>(character, code);
             return pair;
         }).ToDictionary(x => x.Key, x => x.Value);
+        // przypisz slownik do instancji klasy
         obj.EncodedCharacters = matches;
 
         return obj;
@@ -32,7 +35,9 @@ public partial class HuffmanEncoding
 
     public string GetEncoding()
     {
+        // stworz pustego strniga
         var payload = string.Empty;
+        // zapisz wartosci slownika jako jeden string
         foreach (var encEncodedCharacter in EncodedCharacters)
         {
             payload += $"{encEncodedCharacter.Key}{encEncodedCharacter.Value} ";
@@ -43,7 +48,9 @@ public partial class HuffmanEncoding
 
     public string EncodeMessage(string message)
     {
+        // stworz string builder
         var builder = new StringBuilder();
+        // dopisz do buildera zakodowane znaki
         foreach (var c in message)
         {
             builder.Append(EncodedCharacters[c]);
@@ -54,9 +61,13 @@ public partial class HuffmanEncoding
 
     public string DecodeMessage(string encdodedMessage)
     {
+        // stworz pustego stringa
         var message = string.Empty;
+        // odwroc slownik
         var reversedDict = EncodedCharacters.ToDictionary(x => x.Value, x => x.Key);
+        // stworz pustego stringa
         string current = string.Empty;
+        // odkoduj wiadomosc za pomoca slownika
         for (int i = 0; i < encdodedMessage.Length; i++)
         {
             current += encdodedMessage[i];
@@ -73,19 +84,22 @@ public partial class HuffmanEncoding
 
     private void Generate(string text)
     {
+        // przypisz dlugosc wiadomosci
         var contentLenght = text.Length;
-
+        // utworz slownik czestotliwosci znakow
         var freqs = new Dictionary<char, int>();
 
+        // dodaj do slownika znaki wraz z czestotliwoscia
         foreach (var c in text)
         {
             var isPresent = freqs.TryGetValue(c, out var value);
             freqs[c] = isPresent ? value + 1 : 1;
         }
-
+        // posortuj slownika
         var sortedFreqs = freqs.OrderBy(x => x.Value);
-
+        // utworz drzewo
         var trees = new List<Node>();
+        // utworz node'y z slownika czestotliwosci
         foreach (var pair in sortedFreqs)
         {
             var node = new Node()
@@ -96,7 +110,7 @@ public partial class HuffmanEncoding
 
             trees.Add(node);
         }
-
+        // polacz nody ze soba
         while (trees.Count != 1)
         {
             var first = trees[0];
@@ -135,17 +149,16 @@ public partial class HuffmanEncoding
         Traverse(endTree);
     }
 
+    // utworz tekst opisujacy pozyje znaku
     private void Traverse(Node node, string currentText = "")
     {
         var text = currentText;
-
         if (node.Character is not null)
         {
             EncodedCharacters.Add(node.Character.Value, text);
             return;
         }
-
-        //go left
+        
         Traverse(node.Left, text + '0');
         Traverse(node.Right, text + '1');
     }
