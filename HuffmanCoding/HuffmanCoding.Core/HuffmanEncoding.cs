@@ -1,4 +1,5 @@
-﻿using System.Text;
+﻿using System.Data.Common;
+using System.Text;
 using System.Text.RegularExpressions;
 
 namespace HuffmanCoding.Core;
@@ -9,8 +10,10 @@ public partial class HuffmanEncoding
     {
         Generate(text);
     }
-    
-    private HuffmanEncoding() {}
+
+    private HuffmanEncoding()
+    {
+    }
 
     public static HuffmanEncoding CreateFromEncoding(string dict)
     {
@@ -31,6 +34,35 @@ public partial class HuffmanEncoding
         return obj;
     }
 
+    public static HuffmanEncoding CreateFromEncoding(byte[] dict)
+    {
+        var obj = new HuffmanEncoding();
+        var characterAmount = dict[0];
+        var position = 1;
+        var dictSpan = dict.AsSpan();
+        for (var i = 0; i < characterAmount; i++)
+        {
+            var characterBytes = dictSpan.Slice(position, 2);
+            var character = 
+                Encoding.UTF8.GetString(characterBytes[1] == 0 ? characterBytes[..1] : characterBytes)[0];
+
+            position += 2;
+            var bitLenght = dictSpan[position];
+            position++;
+            var byteLenght = (int)Math.Ceiling(bitLenght / 8.0);
+            var encodingBytes = dictSpan
+                .Slice(position, byteLenght)
+                .ToArray()
+                .Select(b => Convert.ToString(b, 2).PadLeft(8, '0'));
+            var encoding = string.Concat(encodingBytes)[(byteLenght * 8 - bitLenght)..];
+            obj.EncodedCharacters.Add(character, encoding);
+
+            position += byteLenght;
+        }
+
+        return obj;
+    }
+
     public Dictionary<char, string> EncodedCharacters { get; set; } = new();
 
     public string GetEncoding()
@@ -44,6 +76,27 @@ public partial class HuffmanEncoding
         }
 
         return payload;
+    }
+
+    public byte[] GetBinaryEncoding()
+    {
+        var bytes = new List<byte> { (byte)EncodedCharacters.Count };
+        foreach (var pair in EncodedCharacters)
+        {
+            var character = Encoding.UTF8.GetBytes(pair.Key.ToString());
+            bytes.AddRange(character);
+            if (character.Length == 1)
+            {
+                bytes.Add(0);
+            }
+
+            var encodingLenght = pair.Value.Length;
+            bytes.Add((byte)encodingLenght);
+            var encoding = pair.Value.ConvertBinaryString();
+            bytes.AddRange(encoding);
+        }
+
+        return bytes.ToArray();
     }
 
     public string EncodeMessage(string message)
@@ -66,7 +119,7 @@ public partial class HuffmanEncoding
         // odwroc slownik
         var reversedDict = EncodedCharacters.ToDictionary(x => x.Value, x => x.Key);
         // stworz pustego stringa
-        string current = string.Empty;
+        var current = string.Empty;
         // odkoduj wiadomosc za pomoca slownika
         for (int i = 0; i < encdodedMessage.Length; i++)
         {
@@ -95,6 +148,7 @@ public partial class HuffmanEncoding
             var isPresent = freqs.TryGetValue(c, out var value);
             freqs[c] = isPresent ? value + 1 : 1;
         }
+
         // posortuj slownika
         var sortedFreqs = freqs.OrderBy(x => x.Value);
         // utworz drzewo
@@ -110,6 +164,7 @@ public partial class HuffmanEncoding
 
             trees.Add(node);
         }
+
         // polacz nody ze soba
         while (trees.Count != 1)
         {
@@ -158,7 +213,7 @@ public partial class HuffmanEncoding
             EncodedCharacters.Add(node.Character.Value, text);
             return;
         }
-        
+
         Traverse(node.Left, text + '0');
         Traverse(node.Right, text + '1');
     }

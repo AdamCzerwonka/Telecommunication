@@ -1,7 +1,9 @@
 ﻿using System;
 using System.IO;
+using System.Linq;
 using System.Net;
 using System.Net.Sockets;
+using System.Threading.Tasks;
 using System.Windows;
 using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.Mvvm.Input;
@@ -12,18 +14,20 @@ namespace HuffmanCoding.Receiver.ViewModels;
 
 public class MainViewModel : ObservableObject
 {
-    private int _portNumber;
-    private string _message;
+    private int _portNumber = 11111;
+    private string _message = string.Empty;
+    private bool _isRunning;
+    private string _buttonText = "Listen";
 
     public MainViewModel()
     {
-        ListenCommand = new RelayCommand(Listen);
+        ListenCommand = new RelayCommand(Listen, () => !IsRunning);
         SaveFileCommand = new RelayCommand(SaveFile);
         Message = string.Empty;
     }
 
-    public RelayCommand ListenCommand { get; }
-    public RelayCommand SaveFileCommand { get; }
+    public IRelayCommand ListenCommand { get; }
+    public IRelayCommand SaveFileCommand { get; }
 
     public int PortNumber
     {
@@ -32,6 +36,29 @@ public class MainViewModel : ObservableObject
         {
             if (value == _portNumber) return;
             _portNumber = value;
+            OnPropertyChanged();
+        }
+    }
+
+    public string ButtonText
+    {
+        get => _buttonText;
+        set
+        {
+            if (value == _buttonText) return;
+            _buttonText = value;
+            OnPropertyChanged();
+        }
+    }
+
+    private bool IsRunning
+    {
+        get => _isRunning;
+        set
+        {
+            if (value == _isRunning) return;
+            _isRunning = value;
+            ListenCommand.NotifyCanExecuteChanged();
             OnPropertyChanged();
         }
     }
@@ -49,47 +76,74 @@ public class MainViewModel : ObservableObject
 
     private void Listen()
     {
+        IsRunning = true;
+        ButtonText = "Listening...";
+        var encodedStream = new MemoryStream();
         var endpoint = new IPEndPoint(IPAddress.Any, PortNumber);
-        try
+        Task.Run(() =>
         {
-            // utworz socket
-            var socket = new Socket(IPAddress.Any.AddressFamily, SocketType.Stream, ProtocolType.Tcp);
-            // nawiaz polaczenie
-            socket.Bind(endpoint);
-            socket.Listen();
-            var handler = socket.Accept();
-            // odbierz dane
-            var data = string.Empty;
-            while (true)
+            try
             {
+                // utworz socket
+                var socket = new Socket(IPAddress.Any.AddressFamily, SocketType.Stream, ProtocolType.Tcp);
+                // nawiaz polaczenie
+                socket.Bind(endpoint);
+                socket.Listen();
+                var handler = socket.Accept();
+                // odbierz dane
                 var bytes = new byte[1024];
                 var bytesReceived = handler.Receive(bytes);
-                data += System.Text.Encoding.UTF8.GetString(bytes, 0, bytesReceived);
-                // zakoncz odbior danych 
-                if (data.IndexOf("<EOF>", StringComparison.Ordinal) > -1)
+                var huffman = HuffmanEncoding.CreateFromEncoding(bytes[..bytesReceived]);
+                encodedStream.Write(bytes.AsSpan()[..bytesReceived]);
+                handler.Send(new byte[] { 0 });
+
+                handler.Receive(bytes);
+                handler.Send(new byte[] { 0 });
+                var msgLenght = BitConverter.ToInt32(bytes.AsSpan()[..4]);
+                encodedStream.Write(bytes.AsSpan()[..4]);
+                var msgByteLenght = (int)Math.Ceiling(msgLenght / 8.0);
+                var stream = new MemoryStream();
+                var receivedMsgBytes = 0;
+                while (true)
                 {
-                    break;
+                    var count = handler.Receive(bytes);
+                    receivedMsgBytes += count;
+                    stream.Write(bytes.AsSpan()[..count]);
+                    if (receivedMsgBytes == msgByteLenght)
+                    {
+                        break;
+                    }
                 }
+
+                // zakoncz polaczenie
+                handler.Shutdown(SocketShutdown.Both);
+                handler.Close();
+
+                stream.Position = 0;
+                stream.CopyTo(encodedStream);
+
+                var encodedMessage = stream
+                    .ToArray()
+                    .Select(b => Convert.ToString(b, 2).PadLeft(8, '0'))
+                    .JoinString()[(msgByteLenght * 8 - msgLenght)..];
+
+                var msg = huffman.DecodeMessage(encodedMessage);
+                Message = msg;
+
+
+                using var encFile = File.OpenWrite("test.bin");
+                encodedStream.Position = 0;
+                encodedStream.CopyTo(encFile);
+                
+                IsRunning = false;
+                ButtonText = "Listen";
             }
-            // zakoncz polaczenie
-            handler.Shutdown(SocketShutdown.Both);
-            handler.Close();
-            // podziel dane na slownik i wiadomosc
-            var splittedData = data.Split("<MSG>");
-            var dict = splittedData[0];
-            var msg = splittedData[1];
-            // usun znacznik
-            msg = msg[..^5];
-            // utworz instancje klasy z slownikiem
-            var huffman = HuffmanEncoding.CreateFromEncoding(dict);
-            // odkoduj i przypisz wiadomosc
-            Message = huffman.DecodeMessage(msg);
-        }
-        catch (Exception e)
-        {
-            Console.WriteLine(e);
-            throw;
-        }
+            catch (Exception e)
+            {
+                Console.WriteLine(e);
+                throw;
+            }
+        });
     }
 
     private void SaveFile()

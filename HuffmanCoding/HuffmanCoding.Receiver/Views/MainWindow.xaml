@@ -21,7 +21,9 @@
             <TextBox Text="{Binding PortNumber}" Width="300" Padding="2" FontSize="16"/>
         </StackPanel>
         <StackPanel Grid.Row="1">
-            <Button Command="{Binding ListenCommand}" Width="300" FontSize="16" Margin="10" FontWeight="Bold">Start Listening</Button>
+            <Button Command="{Binding ListenCommand}"
+                    Content="{Binding ButtonText}"
+                    Width="300" FontSize="16" Margin="10" FontWeight="Bold"/>
         </StackPanel>
         <StackPanel Grid.Row="2">
             <Label HorizontalAlignment="Center" FontSize="16">Received Message</Label>

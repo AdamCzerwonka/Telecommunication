@@ -3,6 +3,7 @@ using System.IO;
 using System.Net;
 using System.Net.Sockets;
 using System.Text;
+using System.Windows;
 using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.Mvvm.Input;
 using HuffmanCoding.Core;
@@ -18,9 +19,9 @@ public class MainViewModel : ObservableObject
         SendCommand = new RelayCommand(Send);
     }
 
-    private string _ipAddress;
-    private int _portNumber;
-    private string _fileName;
+    private string _ipAddress = "127.0.0.1";
+    private int _portNumber = 11111;
+    private string _fileName = string.Empty;
 
 
     public IRelayCommand ChooseFileCommand { get; }
@@ -66,9 +67,8 @@ public class MainViewModel : ObservableObject
         // utworz instancje klasy z tekstu
         var encoding = new HuffmanEncoding(fileContent);
         // utworz slownik oraz zakodowana wiadomosc
-        var dict = encoding.GetEncoding();
         var msg = encoding.EncodeMessage(fileContent);
-        
+
         var ipAddr = IPAddress.Parse(IpAddress);
         var endpoint = new IPEndPoint(ipAddr, PortNumber);
         try
@@ -78,8 +78,28 @@ public class MainViewModel : ObservableObject
             // nawiaz polaczenie
             sender.Connect(endpoint);
             // przeslij dane slownikowe z zakodowana wiadomoscia
-            var data = Encoding.UTF8.GetBytes(dict + "<MSG>" + msg + "<EOF>");
+            // var data = Encoding.UTF8.GetBytes(dict + "<MSG>" + msg + "<EOF>");
+            var data = encoding.GetBinaryEncoding();
             sender.Send(data);
+            var buffer = new byte[20];
+            sender.Receive(buffer);
+            if (buffer[0] != 0)
+            {
+                MessageBox.Show("ERROR");
+            }
+
+            var msgLenght = BitConverter.GetBytes(msg.Length);
+            sender.Send(msgLenght);
+
+            sender.Receive(buffer);
+            if (buffer[0] != 0)
+            {
+                MessageBox.Show("ERROR");
+            }
+
+            var msgBytes = msg.ConvertBinaryString();
+            sender.Send(msgBytes);
+
             // zakoncz polaczenie
             sender.Shutdown(SocketShutdown.Both);
             sender.Close();
