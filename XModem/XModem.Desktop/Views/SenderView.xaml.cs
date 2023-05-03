@@ -1,8 +1,8 @@
-﻿using System.Windows;
+﻿using System.Windows.Controls;
 
 namespace XModem.Desktop.Views;
 
-public partial class SenderView : Window
+public partial class SenderView : UserControl
 {
     public SenderView()
     {
