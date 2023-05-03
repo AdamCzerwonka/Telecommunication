@@ -3,6 +3,7 @@ using System.IO.Ports;
 using System.Reflection;
 using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.Mvvm.Input;
+using XModem.Core;
 using XModem.Desktop.Services;
 
 
@@ -10,6 +11,7 @@ namespace XModem.Desktop.ViewModels;
 
 public class PortSettingsViewModel : ViewModel
 {
+    private readonly SerialPortConfiguration _configuration;
     private string _portName;
     private int _portBaudRate;
     private int _portDataBits;
@@ -22,7 +24,7 @@ public class PortSettingsViewModel : ViewModel
     public int[] BaudRateOptions { get; set; } = { 300, 600, 1200, 2400, 9600, 14400, 19200, 38400, 57600, 115200 };
     public int[] DataBitsOptions { get; set; } = { 5, 6, 7, 8 };
     public string[] PortParityOptions { get; set; } = { "None", "Even", "Mark", "Odd", "Space" };
-    public string[] StopBitsOptions { get; set; } = { "None", "One", "Two", "OnePointFive" };
+    public string[] StopBitsOptions { get; set; } = { "One", "Two", "OnePointFive" };
 
     public string PortName
     {
@@ -31,6 +33,7 @@ public class PortSettingsViewModel : ViewModel
         {
             if (value == _portName) return;
             _portName = value;
+            OnPropertyChanged();
         }
     }
 
@@ -96,10 +99,9 @@ public class PortSettingsViewModel : ViewModel
             _stopBitsChoose = value;
             _portStopBits = value switch
             {
-                "One" => StopBits.One,
                 "Two" => StopBits.Two,
                 "OnePointFive" => StopBits.OnePointFive,
-                _ => StopBits.None
+                _ => StopBits.One
             };
             OnPropertyChanged();
         }
@@ -107,13 +109,24 @@ public class PortSettingsViewModel : ViewModel
 
     public IRelayCommand NextCommand { get; set; }
 
-    public PortSettingsViewModel(INavigationService navigationService)
+    public PortSettingsViewModel(INavigationService navigationService, SerialPortConfiguration configuration)
     {
+        _configuration = configuration;
         NavigationService = navigationService;
-        NextCommand = new RelayCommand(() => NavigationService.NavigateTo<ModeSelectionViewModel>());
+        NextCommand = new RelayCommand(Next);
         PortBaudRate = 9600;
         PortDataBits = 8;
         ParityChoose = "None";
-        StopBitsChoose = "None";
+        StopBitsChoose = "One";
+    }
+
+    private void Next()
+    {
+        _configuration.PortName = PortName;
+        _configuration.BaudRate = PortBaudRate;
+        _configuration.Parity = _portParity;
+        _configuration.StopBits = _portStopBits;
+        _configuration.DataBits = PortDataBits;
+        NavigationService.NavigateTo<ModeSelectionViewModel>();
     }
 }

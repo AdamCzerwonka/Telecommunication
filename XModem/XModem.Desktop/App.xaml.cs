@@ -42,6 +42,8 @@ namespace XModem.Desktop
 
             services.AddSingleton<SerialPortConfiguration>();
 
+            services.AddTransient<Core.XModem>();
+
             _serviceProvider = services.BuildServiceProvider();
         }
 

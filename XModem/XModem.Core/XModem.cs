@@ -2,13 +2,20 @@
 
 namespace XModem.Core;
 
-public class XModem
+public class XModem : IDisposable
 {
     private readonly SerialPort _port;
 
     public XModem(string portName)
     {
         _port = new SerialPort(portName);
+        _port.ReadTimeout = 10000;
+    }
+
+    public XModem(SerialPortConfiguration configuration)
+    {
+        _port = new SerialPort(configuration.PortName, configuration.BaudRate, configuration.Parity,
+            configuration.DataBits, configuration.StopBits);
         _port.ReadTimeout = 10000;
     }
 
@@ -115,5 +122,10 @@ public class XModem
 
             _port.Read(buffer, 0, 132);
         }
+    }
+
+    public void Dispose()
+    {
+        _port.Dispose();
     }
 }

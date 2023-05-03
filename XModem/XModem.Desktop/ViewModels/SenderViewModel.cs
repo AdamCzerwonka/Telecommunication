@@ -1,13 +1,17 @@
 ﻿using System.Windows;
 using CommunityToolkit.Mvvm.Input;
 using Microsoft.Win32;
+using XModem.Core;
 
 namespace XModem.Desktop.ViewModels;
 
 public class SenderViewModel : ViewModel
 {
-    public SenderViewModel()
+    private readonly Core.XModem _xModem;
+
+    public SenderViewModel(Core.XModem xModem)
     {
+        _xModem = xModem;
         ChooseFileCommand = new RelayCommand(ChooseFile);
         SendCommand = new RelayCommand(Send);
     }
@@ -55,5 +59,6 @@ public class SenderViewModel : ViewModel
     private void Send()
     {
         MessageBox.Show("SENDING " + FilePath);
+        _xModem.Start(XModemMode.Sender, UseCrc);
     }
 }
