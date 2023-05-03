@@ -4,9 +4,39 @@
              xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
              xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
              xmlns:local="clr-namespace:XModem.Desktop.Views"
+             xmlns:vm="clr-namespace:XModem.Desktop.ViewModels"
+             d:DataContext="{d:DesignInstance Type=vm:ModeSelectionViewModel, IsDesignTimeCreatable=True}"
              mc:Ignorable="d"
              Height="450" Width="800">
     <Grid>
+        <Grid.RowDefinitions>
+            <RowDefinition Height="auto" />
+            <RowDefinition Height="*" />
+        </Grid.RowDefinitions>
+        <Grid.ColumnDefinitions>
+            <ColumnDefinition Width="*" />
+            <ColumnDefinition Width="*" />
+        </Grid.ColumnDefinitions>
 
+        <TextBlock Padding="10"
+                   FontSize="30"
+                   TextAlignment="Center"
+                   VerticalAlignment="Center"
+                   Grid.Row="0"
+                   Grid.Column="0"
+                   Grid.ColumnSpan="2">
+            Select Mode
+        </TextBlock>
+
+        <Button Width="200" Height="50"
+                Grid.Column="0" Grid.Row="1"
+                Command="{Binding NavigateSenderCommand}">
+            Sender
+        </Button>
+        <Button Width="200" Height="50"
+                Grid.Column="1" Grid.Row="1"
+                Command="{Binding NavigateReceiverCommand}">
+            Receiver
+        </Button>
     </Grid>
 </UserControl>
