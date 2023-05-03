@@ -1,8 +1,7 @@
-
-﻿using System;
+using System;
 using System.IO.Ports;
 using System.Reflection;
-﻿using CommunityToolkit.Mvvm.ComponentModel;
+using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.Mvvm.Input;
 using XModem.Desktop.Services;
 
@@ -32,6 +31,9 @@ public class PortSettingsViewModel : ViewModel
         {
             if (value == _portName) return;
             _portName = value;
+        }
+    }
+
     private INavigationService _navigationService = null!;
 
     public INavigationService NavigationService
@@ -101,13 +103,15 @@ public class PortSettingsViewModel : ViewModel
             };
             OnPropertyChanged();
         }
+    }
+
     public IRelayCommand NextCommand { get; set; }
 
     public PortSettingsViewModel(INavigationService navigationService)
     {
         NavigationService = navigationService;
         NextCommand = new RelayCommand(() => NavigationService.NavigateTo<ModeSelectionViewModel>());
-         PortBaudRate = 9600;
+        PortBaudRate = 9600;
         PortDataBits = 8;
         ParityChoose = "None";
         StopBitsChoose = "None";
