@@ -1,19 +1,16 @@
+
 ﻿using System;
 using System.IO.Ports;
 using System.Reflection;
+﻿using CommunityToolkit.Mvvm.ComponentModel;
+using CommunityToolkit.Mvvm.Input;
+using XModem.Desktop.Services;
+
 
 namespace XModem.Desktop.ViewModels;
 
 public class PortSettingsViewModel : ViewModel
 {
-    public PortSettingsViewModel()
-    {
-        PortBaudRate = 9600;
-        PortDataBits = 8;
-        ParityChoose = "None";
-        StopBitsChoose = "None";
-    }
-    
     private string _portName;
     private int _portBaudRate;
     private int _portDataBits;
@@ -35,6 +32,14 @@ public class PortSettingsViewModel : ViewModel
         {
             if (value == _portName) return;
             _portName = value;
+    private INavigationService _navigationService = null!;
+
+    public INavigationService NavigationService
+    {
+        get => _navigationService;
+        set
+        {
+            _navigationService = value;
             OnPropertyChanged();
         }
     }
@@ -96,5 +101,15 @@ public class PortSettingsViewModel : ViewModel
             };
             OnPropertyChanged();
         }
+    public IRelayCommand NextCommand { get; set; }
+
+    public PortSettingsViewModel(INavigationService navigationService)
+    {
+        NavigationService = navigationService;
+        NextCommand = new RelayCommand(() => NavigationService.NavigateTo<ModeSelectionViewModel>());
+         PortBaudRate = 9600;
+        PortDataBits = 8;
+        ParityChoose = "None";
+        StopBitsChoose = "None";
     }
 }

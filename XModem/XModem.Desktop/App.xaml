@@ -8,5 +8,14 @@
         <DataTemplate DataType="{x:Type TypeName=vm:PortSettingsViewModel}">
             <view:PortSettingsView />
         </DataTemplate>
+        <DataTemplate DataType="{x:Type TypeName=vm:ModeSelectionViewModel}">
+            <view:ModeSelectionView />
+        </DataTemplate>
+        <DataTemplate DataType="{x:Type TypeName=vm:SenderViewModel}">
+            <view:SenderView />
+        </DataTemplate>
+        <DataTemplate DataType="{x:Type TypeName=vm:ReceiverViewModel}">
+            <view:ReceiverView />
+        </DataTemplate>
     </Application.Resources>
 </Application>
