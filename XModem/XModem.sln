@@ -4,6 +4,10 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "XModem.Desktop", "XModem.De
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "XModem.Core", "XModem.Core\XModem.Core.csproj", "{237C7B07-3D87-4CAF-8658-0FAD402ED082}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ConsoleApp1", "ConsoleApp1\ConsoleApp1.csproj", "{D3429224-7B2E-4762-86AA-95538A46B0E7}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ConsoleApp2", "ConsoleApp2\ConsoleApp2.csproj", "{EE6E8262-A66C-4309-9478-0600912BC757}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -18,5 +22,13 @@ Global
 		{237C7B07-3D87-4CAF-8658-0FAD402ED082}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{237C7B07-3D87-4CAF-8658-0FAD402ED082}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{237C7B07-3D87-4CAF-8658-0FAD402ED082}.Release|Any CPU.Build.0 = Release|Any CPU
+		{D3429224-7B2E-4762-86AA-95538A46B0E7}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{D3429224-7B2E-4762-86AA-95538A46B0E7}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{D3429224-7B2E-4762-86AA-95538A46B0E7}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{D3429224-7B2E-4762-86AA-95538A46B0E7}.Release|Any CPU.Build.0 = Release|Any CPU
+		{EE6E8262-A66C-4309-9478-0600912BC757}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{EE6E8262-A66C-4309-9478-0600912BC757}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{EE6E8262-A66C-4309-9478-0600912BC757}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{EE6E8262-A66C-4309-9478-0600912BC757}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 EndGlobal
