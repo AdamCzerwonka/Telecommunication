@@ -2,7 +2,7 @@
 
 public class XModemPacket
 {
-    public XModemPacket(XModemSymbol symbol, byte packetNumber, byte[] data) : this(symbol, data)
+    public XModemPacket(XModemSymbol symbol, int packetNumber, byte[] data) : this(symbol, data)
     {
         PacketNumber = (byte)(packetNumber % 256);
         PacketNumberChecksum = (byte)(0xff - PacketNumber);
@@ -31,15 +31,50 @@ public class XModemPacket
         return header;
     }
 
+    public bool IsPacketValid(bool useCrc = false)
+    {
+        if (PacketNumber + PacketNumberChecksum != 0xff)
+        {
+            return false;
+        }
+
+        var calucaltedChecksum = useCrc ? CrcChecksum() : AlgebraicChecksum();
+        return calucaltedChecksum == DataChecksum;
+    }
+
     public byte[] Checksum(bool useCrc = false)
     {
-        var checksumValue = AlgebraicChecksum();
-        DataChecksum = checksumValue;
+        var value = useCrc ? CrcChecksum() : AlgebraicChecksum();
+        DataChecksum = value;
 
-        var checksum = new byte[1];
-        checksum[0] = checksumValue;
+        var checksum = BitConverter.GetBytes(value);
 
-        return checksum;
+        return useCrc ? checksum : checksum[..1];
+    }
+
+    private short CrcChecksum()
+    {
+        var crc = 0;
+        byte b;
+
+        for (var i = 0; i < 128; i++)
+        {
+            crc ^= Data[i] << 8;
+            b = 8;
+            do
+            {
+                if ((crc & 0x8000) != 0)
+                {
+                    crc = crc << 1 ^ 0x1021;
+                }
+                else
+                {
+                    crc = crc << 1;
+                }
+            } while (--b != 0);
+        }
+
+        return (short)crc;
     }
 
     private byte AlgebraicChecksum()

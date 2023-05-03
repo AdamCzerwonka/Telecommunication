@@ -19,53 +19,78 @@ public class XModem : IDisposable
         _port.ReadTimeout = 10000;
     }
 
-    public void Start(XModemMode modemMode, bool useCrc)
+    public void Start(XModemMode modemMode, Stream stream, bool useCrc = false)
     {
         _port.Open();
         if (modemMode == XModemMode.Receiver)
         {
-            StartReceiver(useCrc);
+            StartReceiver(stream, useCrc);
         }
         else
         {
-            StartSender(useCrc);
+            StartSender(stream, useCrc);
         }
     }
 
-    private void StartSender(bool useCrc)
+    private void StartSender(Stream stream, bool useCrc)
     {
-        var buffer = new byte[132];
+        // Wait for synchorization with the receiver
         while (true)
         {
-            var test = ReadWithoutTimeout();
-            Console.WriteLine(test.ToString("x2"));
-            if (test == (int)XModemSymbol.NAK)
+            var response = ReadWithoutTimeout();
+            if (response == (int)XModemSymbol.NAK)
             {
-                Console.WriteLine("GOT NAK");
+                break;
+            }
+
+            if (response == (int)XModemSymbol.C && useCrc)
+            {
                 break;
             }
         }
 
-        var text = "Ala ma kota"u8.ToArray();
-        var data = new byte[128];
-        text.CopyTo(data, 0);
-
-        var packet = new XModemPacket(XModemSymbol.SOH, 1, data);
-        _port.Write(packet.GetHeader(), 0, 3);
-        _port.Write(packet.Data, 0, 128);
-        _port.Write(packet.Checksum(), 0, 1);
-
-        var res = _port.ReadByte();
-        if (res == (int)XModemSymbol.ACK)
+        var sendBuffer = new byte[128];
+        var packetNumber = 1;
+        while (true)
         {
-            Console.WriteLine("TESTESTEST");
-            _port.Write(new byte[] { (byte)XModemSymbol.EOT }, 0, 1);
+            var bytesRead = stream.Read(sendBuffer, 0, 128);
+            if (bytesRead == 0)
+            {
+                break;
+            }
+
+            for (var i = bytesRead; i < 128; i++)
+            {
+                sendBuffer[i] = 26;
+            }
+
+            var packet = new XModemPacket(XModemSymbol.SOH, packetNumber, sendBuffer);
+            _port.Write(packet.GetHeader(), 0, 3);
+            _port.Write(packet.Data, 0, 128);
+            var checksumArray = packet.Checksum(useCrc);
+            _port.Write(checksumArray, 0, checksumArray.Length);
+
+            var response = _port.ReadByte();
+            if (response == (int)XModemSymbol.ACK)
+            {
+                packetNumber++;
+            }
+
+            if (response == (int)XModemSymbol.NAK)
+            {
+                stream.Position -= bytesRead;
+            }
         }
 
-        res = _port.ReadByte();
-        if (res == (int)XModemSymbol.ACK)
+        while (true)
         {
-            Console.WriteLine("HAHAH");
+            Console.WriteLine("ENDING");
+            _port.WriteByte((byte)XModemSymbol.EOT);
+            var response = _port.ReadByte();
+            if (response == (int)XModemSymbol.ACK)
+            {
+                return;
+            }
         }
     }
 
@@ -78,25 +103,35 @@ public class XModem : IDisposable
         }
         catch (Exception e)
         {
+            // ignored
         }
 
         return 0;
     }
 
-    private void StartReceiver(bool useCrc)
+    private void StartReceiver(Stream stream, bool useCrc = false)
     {
-        var shouldContinue = false;
-        var buffer = new byte[132];
+        var packetLenght = useCrc ? 133 : 132;
+        var synSymbol = useCrc ? XModemSymbol.C : XModemSymbol.NAK;
+        var buffer = new byte[packetLenght];
         for (var i = 0; i < 6; i++)
         {
-            _port.WriteByte((byte)XModemSymbol.NAK);
+            _port.WriteByte((byte)synSymbol);
 
             try
             {
-                _port.Read(buffer, 0, 132);
+                var read = 0;
+                while (true)
+                {
+                    read += _port.Read(buffer, read, packetLenght - read);
+                    if (read == packetLenght)
+                    {
+                        break;
+                    }
+                }
+
                 if (buffer[0] == (int)XModemSymbol.SOH)
                 {
-                    shouldContinue = true;
                     Console.WriteLine("GOT SOH");
                     break;
                 }
@@ -107,12 +142,33 @@ public class XModem : IDisposable
             }
         }
 
-        while (shouldContinue)
+        while (true)
         {
             var packet = XModemPacket.FromBuffer(buffer);
             if (packet.Symbol == XModemSymbol.SOH)
             {
-                _port.WriteByte((byte)XModemSymbol.ACK);
+                if (packet.IsPacketValid(useCrc) == false)
+                {
+                    _port.WriteByte((byte)XModemSymbol.NAK);
+                }
+                else
+                {
+                    var paddingLenght = 0;
+                    for (var i = 128 - 1; i >= 0; i--)
+                    {
+                        if (packet.Data[i] == 26)
+                        {
+                            paddingLenght++;
+                        }
+                        else
+                        {
+                            break;
+                        }
+                    }
+
+                    stream.Write(packet.Data.AsSpan()[..(128 - paddingLenght)]);
+                    _port.WriteByte((byte)XModemSymbol.ACK);
+                }
             }
             else if (packet.Symbol == XModemSymbol.EOT)
             {
@@ -120,7 +176,20 @@ public class XModem : IDisposable
                 break;
             }
 
-            _port.Read(buffer, 0, 132);
+            var read = 0;
+            while (true)
+            {
+                read += _port.Read(buffer, read, packetLenght - read);
+                if (read == packetLenght)
+                {
+                    break;
+                }
+
+                if (buffer[0] == (byte)XModemSymbol.EOT)
+                {
+                    break;
+                }
+            }
         }
     }
 

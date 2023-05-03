@@ -1,4 +1,6 @@
-﻿using System.Windows;
+﻿using System.IO;
+using System.Net;
+using System.Windows;
 using CommunityToolkit.Mvvm.Input;
 using Microsoft.Win32;
 using XModem.Core;
@@ -59,6 +61,7 @@ public class SenderViewModel : ViewModel
     private void Send()
     {
         MessageBox.Show("SENDING " + FilePath);
-        _xModem.Start(XModemMode.Sender, UseCrc);
+        var stream = File.OpenRead(FilePath);
+        _xModem.Start(XModemMode.Sender, stream, UseCrc);
     }
 }
