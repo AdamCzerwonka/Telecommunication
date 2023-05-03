@@ -4,6 +4,8 @@
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
         xmlns:local="clr-namespace:XModem.Desktop.Views"
+        xmlns:vm="clr-namespace:XModem.Desktop.ViewModels"
+        d:DataContext="{d:DesignInstance Type=vm:PortSettingsViewModel, IsDesignTimeCreatable=True}"
         mc:Ignorable="d"
         Title="PortSettingsView" Height="450" Width="800">
     <Grid>
@@ -13,11 +15,57 @@
         <Grid.RowDefinitions>
             <RowDefinition Height="Auto"/>
             <RowDefinition Height="Auto"/>
+            <RowDefinition Height="Auto"/>
+            <RowDefinition Height="Auto"/>
+            <RowDefinition Height="Auto"/>
+            <RowDefinition Height="Auto"/>
+            <RowDefinition Height="Auto"/>
+            <RowDefinition Height="Auto"/>
+            <RowDefinition Height="Auto"/>
+            <RowDefinition Height="Auto"/>
+            <RowDefinition Height="Auto"/>
+            <RowDefinition Height="Auto"/>
         </Grid.RowDefinitions>
         
-        <TextBlock Grid.Column="0" Grid.Row="0">Configure Port</TextBlock>
-        <ComboBox Grid.Column="0" Grid.Row="1">
+        <TextBlock Grid.Column="0" Grid.Row="0" 
+                   HorizontalAlignment="Center"
+                   FontSize="32">Configure Port</TextBlock>
+        
+        <!-- PORT NAME -->
+        <TextBlock Grid.Column="0" Grid.Row="1" FontSize="12" Margin="5 0 5 0">Port name</TextBlock>
+        <ComboBox Grid.Column="0" Grid.Row="2" Margin="5 0 5 5"
+                  ItemsSource="{Binding PortNameOptions}"
+                  SelectedValue="{Binding PortName}"/>
+        
+        
+        <!-- BAUD RATE -->
+        <TextBlock Grid.Column="0" Grid.Row="3" FontSize="12" Margin="5 0 5 0">Baud rate</TextBlock>
+        <ComboBox Grid.Column="0" Grid.Row="4" Margin="5 0 5 5"
+                  ItemsSource="{Binding BaudRateOptions}"
+                  SelectedItem="{Binding PortBaudRate}"/>
             
-        </ComboBox>
+        
+        
+        <!-- DATA BITS -->
+        <TextBlock Grid.Column="0" Grid.Row="5" FontSize="12" Margin="5 0 5 0">Data bits</TextBlock>
+        <ComboBox Grid.Column="0" Grid.Row="6" Margin="5 0 5 5"
+                  ItemsSource="{Binding DataBitsOptions}"
+                  SelectedValue="{Binding PortDataBits}"/>
+        
+        
+        <!-- PARITY  -->
+        <TextBlock Grid.Column="0" Grid.Row="7" FontSize="12" Margin="5 0 5 0">Parity</TextBlock>
+        <ComboBox Grid.Column="0" Grid.Row="8" Margin="5 0 5 5"
+                  ItemsSource="{Binding PortParityOptions}" 
+                  SelectedValue="{Binding ParityChoose}"/>
+        
+            <!-- STOP BITS  -->
+        <TextBlock Grid.Column="0" Grid.Row="9" FontSize="12" Margin="5 0 5 0">Stop bits</TextBlock>
+        <ComboBox Grid.Column="0" Grid.Row="10" Margin="5 0 5 5"
+                  ItemsSource="{Binding StopBitsOptions}" 
+                  SelectedValue="{Binding StopBitsChoose}"/>
+        
+            <Button Grid.Row="11" FontSize="24" Width="125" Margin="0 10 0 0" 
+                    HorizontalAlignment="Center">Continue</Button>
     </Grid>
 </Window>
