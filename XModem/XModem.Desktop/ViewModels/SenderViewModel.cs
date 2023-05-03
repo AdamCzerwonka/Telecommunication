@@ -63,5 +63,7 @@ public class SenderViewModel : ViewModel
         MessageBox.Show("SENDING " + FilePath);
         var stream = File.OpenRead(FilePath);
         _xModem.Start(XModemMode.Sender, stream, UseCrc);
+        stream.Close();
+        MessageBox.Show("Finished sending");
     }
 }

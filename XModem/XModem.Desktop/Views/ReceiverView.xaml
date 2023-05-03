@@ -4,9 +4,27 @@
              xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
              xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
              xmlns:local="clr-namespace:XModem.Desktop.Views"
+             xmlns:vm="clr-namespace:XModem.Desktop.ViewModels"
+             d:DataContext="{d:DesignInstance Type=vm:ReceiverViewModel, IsDesignTimeCreatable=True}"
              mc:Ignorable="d"
              Height="450" Width="800">
     <Grid>
+        <Grid.RowDefinitions>
+            <RowDefinition Height="Auto" />
+            <RowDefinition Height="Auto" />
+            <RowDefinition Height="Auto" />
+        </Grid.RowDefinitions>
 
+        <TextBlock Padding="10"
+                   FontSize="22"
+                   TextAlignment="Center"
+                   Grid.Row="0">
+            Receive File using XModem
+        </TextBlock>
+        
+        <StackPanel Grid.Row="1">
+            <CheckBox IsChecked="{Binding UseCrc}">Use CRC</CheckBox>
+        </StackPanel>
+        <Button Grid.Row="2" Command="{Binding ReceiveCommand}">Receive</Button>
     </Grid>
 </UserControl>

@@ -84,7 +84,6 @@ public class XModem : IDisposable
 
         while (true)
         {
-            Console.WriteLine("ENDING");
             _port.WriteByte((byte)XModemSymbol.EOT);
             var response = _port.ReadByte();
             if (response == (int)XModemSymbol.ACK)
@@ -132,7 +131,6 @@ public class XModem : IDisposable
 
                 if (buffer[0] == (int)XModemSymbol.SOH)
                 {
-                    Console.WriteLine("GOT SOH");
                     break;
                 }
             }
@@ -141,6 +139,8 @@ public class XModem : IDisposable
                 Console.WriteLine(i);
             }
         }
+
+        var data = new List<byte>();
 
         while (true)
         {
@@ -153,20 +153,7 @@ public class XModem : IDisposable
                 }
                 else
                 {
-                    var paddingLenght = 0;
-                    for (var i = 128 - 1; i >= 0; i--)
-                    {
-                        if (packet.Data[i] == 26)
-                        {
-                            paddingLenght++;
-                        }
-                        else
-                        {
-                            break;
-                        }
-                    }
-
-                    stream.Write(packet.Data.AsSpan()[..(128 - paddingLenght)]);
+                    data.AddRange(packet.Data);
                     _port.WriteByte((byte)XModemSymbol.ACK);
                 }
             }
@@ -191,6 +178,20 @@ public class XModem : IDisposable
                 }
             }
         }
+        
+        var paddingLenght = 0;
+        for (var i = data.Count - 1; i >= 0; i--)
+        {
+            if (data[i] == 26)
+            {
+                paddingLenght++;
+            }
+            else
+            {
+                break;
+            }
+        }
+        stream.Write(data.Take(data.Count - paddingLenght).ToArray());
     }
 
     public void Dispose()
