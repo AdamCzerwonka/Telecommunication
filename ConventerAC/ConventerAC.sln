@@ -1,0 +1,22 @@
+﻿
+Microsoft Visual Studio Solution File, Format Version 12.00
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ConventerAC.Core", "ConventerAC.Core\ConventerAC.Core.csproj", "{14E625FB-AF88-4194-A0D1-6D4737B20E48}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ConventerAC.Desktop", "ConventerAC.Desktop\ConventerAC.Desktop.csproj", "{BF1A6986-FCAA-4891-B1CF-C83BAA07E330}"
+EndProject
+Global
+	GlobalSection(SolutionConfigurationPlatforms) = preSolution
+		Debug|Any CPU = Debug|Any CPU
+		Release|Any CPU = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{14E625FB-AF88-4194-A0D1-6D4737B20E48}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{14E625FB-AF88-4194-A0D1-6D4737B20E48}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{14E625FB-AF88-4194-A0D1-6D4737B20E48}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{14E625FB-AF88-4194-A0D1-6D4737B20E48}.Release|Any CPU.Build.0 = Release|Any CPU
+		{BF1A6986-FCAA-4891-B1CF-C83BAA07E330}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{BF1A6986-FCAA-4891-B1CF-C83BAA07E330}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{BF1A6986-FCAA-4891-B1CF-C83BAA07E330}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{BF1A6986-FCAA-4891-B1CF-C83BAA07E330}.Release|Any CPU.Build.0 = Release|Any CPU
+	EndGlobalSection
+EndGlobal
