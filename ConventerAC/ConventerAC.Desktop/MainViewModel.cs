@@ -1,12 +1,11 @@
-﻿using System;
-using System.Runtime.InteropServices.JavaScript;
-using System.Windows.Input;
+﻿using System.Windows.Input;
+using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.Mvvm.Input;
 using Microsoft.Win32;
 
 namespace ConventerAC.Desktop;
 
-public class MainViewModel : NotifyPropertyChanged
+public class MainViewModel : ObservableObject
 {
     private string _saveFilePath;
     private Core.ConventerAC _conventerAc;
@@ -54,6 +53,8 @@ public class MainViewModel : NotifyPropertyChanged
     private void ChooseSaveFile()
     {
         var fileDialog = new SaveFileDialog();
+        fileDialog.DefaultExt = "wav";
+        fileDialog.Filter = "Wav files (*.wav)|All files (*.*)";
         if (fileDialog.ShowDialog() == false)
         {
             return;
