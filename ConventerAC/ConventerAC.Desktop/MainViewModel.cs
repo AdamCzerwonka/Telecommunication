@@ -1,22 +1,31 @@
-﻿using System.Windows.Input;
+﻿using System;
+using System.Windows.Forms;
+using System.Windows.Input;
 using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.Mvvm.Input;
-using Microsoft.Win32;
+using SaveFileDialog = Microsoft.Win32.SaveFileDialog;
 
 namespace ConventerAC.Desktop;
 
 public class MainViewModel : ObservableObject
 {
-    private string _saveFilePath;
+    private string _saveFilePath = string.Empty;
     private Core.ConventerAC _conventerAc;
     private string _recordButtonText = "Start recording";
+    private string _loadFilePath;
+    private string _snr = "SNR: -";
+    private string _quantization;
 
     public MainViewModel()
     {
-        _conventerAc = new();
-        RecordCommand = new RelayCommand(Record);
+        _conventerAc = new Core.ConventerAC();
+        RecordCommand = new RelayCommand(Record, () => SaveFilePath != string.Empty);
         ChooseSaveFileCommand = new RelayCommand(ChooseSaveFile);
-        PlaySoundCommand = new RelayCommand(PlaySound);
+        ChooseLoadFileCommand = new RelayCommand(ChooseLoadFile);
+        PlayRecordedSoundCommand = new RelayCommand(PlayRecordedSound);
+        PlayLoadedSoundCommand = new RelayCommand(PlayLoadedSound);
+        Quantization = "8";
+        Sampling = "48000";
     }
 
     public string RecordButtonText
@@ -30,8 +39,19 @@ public class MainViewModel : ObservableObject
         }
     }
 
-    public string Sampling { get; set; } = "48000";
-    public string Quantization { get; set; } = "8";
+    public string Sampling { get; set; }
+
+    public string Quantization
+    {
+        get => _quantization;
+        set
+        {
+            if (value == _quantization) return;
+            _quantization = value;
+            OnPropertyChanged();
+            CalculateSnr();
+        }
+    }
 
     public string SaveFilePath
     {
@@ -41,20 +61,45 @@ public class MainViewModel : ObservableObject
             if (value == _saveFilePath) return;
             _saveFilePath = value;
             OnPropertyChanged();
+            RecordCommand.NotifyCanExecuteChanged();
         }
     }
 
-    public ICommand RecordCommand { get; }
-    public ICommand ChooseSaveFileCommand { get; }
-    public ICommand PlaySoundCommand { get; }
+    public string LoadFilePath
+    {
+        get => _loadFilePath;
+        set
+        {
+            if (value == _loadFilePath) return;
+            _loadFilePath = value;
+            OnPropertyChanged();
+        }
+    }
 
-    private bool _isRecording { get; set; } = false;
+    public string Snr
+    {
+        get => _snr;
+        set
+        {
+            if (value == _snr) return;
+            _snr = value;
+            OnPropertyChanged();
+        }
+    }
+
+    public IRelayCommand RecordCommand { get; }
+    public IRelayCommand ChooseSaveFileCommand { get; }
+    public IRelayCommand ChooseLoadFileCommand { get; }
+    public IRelayCommand PlayRecordedSoundCommand { get; }
+    public IRelayCommand PlayLoadedSoundCommand { get; }
+    private bool IsRecording { get; set; }
 
     private void ChooseSaveFile()
     {
-        var fileDialog = new SaveFileDialog();
-        fileDialog.DefaultExt = "wav";
-        fileDialog.Filter = "Wav files (*.wav)|All files (*.*)";
+        var fileDialog = new SaveFileDialog
+        {
+            Filter = "Wav files (*.wav)|*.wav|All files (*.*)|*.*"
+        };
         if (fileDialog.ShowDialog() == false)
         {
             return;
@@ -63,24 +108,53 @@ public class MainViewModel : ObservableObject
         SaveFilePath = fileDialog.FileName;
     }
 
+    private void ChooseLoadFile()
+    {
+        var fileDialog = new OpenFileDialog()
+        {
+            Filter = "Wav files (*.wav)|*.wav|All files (*.*)|*.*"
+        };
+        fileDialog.ShowDialog();
+
+        LoadFilePath = fileDialog.FileName;
+    }
+
     private void Record()
     {
-        if (!_isRecording)
+        if (!IsRecording)
         {
             _conventerAc.StartRecording(int.Parse(Sampling), int.Parse(Quantization), SaveFilePath);
-            _isRecording = true;
+            IsRecording = true;
             RecordButtonText = "Stop recording";
         }
         else
         {
             _conventerAc.StopRecording();
-            _isRecording = false;
+            IsRecording = false;
             RecordButtonText = "Start recording";
         }
     }
 
-    private void PlaySound()
+    private void PlayRecordedSound()
     {
-        _conventerAc.PlaySound(SaveFilePath);
+        if (!_conventerAc.PlaySound(SaveFilePath))
+        {
+            MessageBox.Show("Invalid file path", "Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
+        }
     }
+
+    private void PlayLoadedSound()
+    {
+        if (!_conventerAc.PlaySound(LoadFilePath))
+        {
+            MessageBox.Show("Invalid file path", "Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
+        }
+    }
+
+    private void CalculateSnr()
+    {
+        var value = 20 * Math.Log10(Math.Pow(2, int.Parse(Quantization)));
+        Snr = $"SNR: {value:F4}";
+    }
+
 }

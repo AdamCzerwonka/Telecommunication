@@ -15,7 +15,7 @@ public class ConventerAC
 
         waveSource.DataAvailable += OnDataAvailable;
         waveSource.RecordingStopped += OnRecordingStopped;
-        
+
         waveFile = new WaveFileWriter(filePath, waveSource.WaveFormat);
         waveSource.StartRecording();
     }
@@ -37,9 +37,16 @@ public class ConventerAC
         waveSource.StopRecording();
     }
 
-    public void PlaySound(string path)
+    public bool PlaySound(string path)
     {
-        var player = new SoundPlayer(path);
-        player.Play();
+        try
+        {
+            var player = new SoundPlayer(path);
+            player.Play();
+        } catch (Exception _)
+        {
+            return false;
+        }
+        return true;
     }
 }
